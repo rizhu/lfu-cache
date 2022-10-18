@@ -1,5 +1,6 @@
 #include "../../libs/kv_linked_list.hpp"
 
+#include <cassert>
 #include <iostream>
 
 using namespace std;

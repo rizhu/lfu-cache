@@ -1,5 +1,6 @@
 #include "../../libs/lfu_cache.hpp"
 
+#include <cassert>
 #include <iostream>
 #include <stdexcept>
 #include <string>
