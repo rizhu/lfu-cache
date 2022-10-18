@@ -16,8 +16,8 @@ concept Hashable =
 template <Hashable K, typename V>
 class LFUCache {
 public:
-    using Node_ptr = typename KVLinkedList<K, V>::Node_ptr;
     using LL = KVLinkedList<K, V>;
+    using Node_t = typename LL::Node_t;
 
     LFUCache(size_t capacity) : _capacity(capacity) { }
 
@@ -56,26 +56,27 @@ public:
 
 private:
     void _use(K key) {
-        Node_ptr node_ptr = this->_key_value_map[key];
+        Node_t* node = this->_key_value_map[key];
 
-        Node_ptr behind = node_ptr->prev();
-        Node_ptr ahead = node_ptr->next();
+        Node_t* behind = node->prev();
+        Node_t* ahead = node->next();
 
         behind->set_next(ahead);
         ahead->set_prev(behind);
 
-        node_ptr->use();
-        if (node_ptr->freq() - 1 == this->_min_freq && behind->next() == behind) {
+        node->use();
+        if (node->freq() - 1 == this->_min_freq && behind->next() == behind) {
+            this->_freq_map.erase(this->_min_freq);
             this->_min_freq++;
         }
-        this->_freq_map[node_ptr->freq()].push_front(node_ptr);
+        this->_freq_map[node->freq()].push_front(node);
     }
 
-    unordered_map<K, Node_ptr> _key_value_map;
+    unordered_map<K, Node_t*> _key_value_map;
     unordered_map<int, LL> _freq_map;
 
     size_t _capacity;
-    
+
     size_t _contains = 0;
     size_t _min_freq = 0;
 };
