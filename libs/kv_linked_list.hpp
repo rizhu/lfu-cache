@@ -110,7 +110,9 @@ public:
 
         _length--;
     }
+
 private:
     Node_ptr _sentinel;
+    
     size_t _length = 0;
 };
