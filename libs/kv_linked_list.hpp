@@ -50,13 +50,9 @@ public:
         Node_t *node = this->front(), *next_node = nullptr;
         while (node != this->end()) {
             next_node = node->next();
-            node->set_prev(nullptr);
-            node->set_next(nullptr);
             delete node;
             node = next_node;
         }
-        this->_sentinel->set_next(nullptr);
-        this->_sentinel->set_prev(nullptr);
         delete this->_sentinel;
     }
 
@@ -78,7 +74,7 @@ public:
         this->_sentinel->set_prev(node);
         this->_length = other.size();
     }
-    KVLinkedList<K, V> operator=(const KVLinkedList<K, V>& other) {
+    KVLinkedList<K, V>& operator=(const KVLinkedList<K, V>& other) {
         Node_t *node = this->front(), *prev = this->_sentinel;
         for (Node_t *other_node = other.front();
             node != this->end() && other_node != other.end();
@@ -106,19 +102,43 @@ public:
         return *this;
     }
 
-    Node_t* front() const {
-        return this->_sentinel->next();
+    KVLinkedList(KVLinkedList<K, V>&& other) {
+        this->_sentinel = other.end();
+        this->_length = other.size();
+
+        other.set_sentinel(new Node_t());
+        other.end()->set_next(other.end());
+        other.end()->set_prev(other.end());
+        other.set_size(0);
+    }
+    KVLinkedList<K, V>& operator=(KVLinkedList<K, V>&& other) {
+        Node_t *node = this->front(), *next_node = nullptr;
+        while (node != this->end()) {
+            next_node = node->next();
+            delete node;
+            node = next_node;
+        }
+        delete this->_sentinel;
+
+        this->_sentinel = other.end();
+        this->_length = other.size();
+
+        other.set_sentinel(new Node_t());
+        other.end()->set_next(other.end());
+        other.end()->set_prev(other.end());
+        other.set_size(0);
+
+        return *this;
     }
 
-    Node_t* back() const {
-        return this->_sentinel->prev();
-    }
+    Node_t* front() const { return this->_sentinel->next(); }
+    Node_t* back() const { return this->_sentinel->prev(); }
 
-    Node_t* end() const {
-        return this->_sentinel;
-    }
+    Node_t* end() const { return this->_sentinel; }
+    void set_sentinel(Node_t *new_sentinel) { this->_sentinel = new_sentinel; }
 
-    size_t size() const {return this->_length; }
+    size_t size() const { return this->_length; }
+    void set_size(size_t new_size) { this->_length = new_size; }
 
     void push_front(Node_t* node) {
         auto front = this->_sentinel->next();
