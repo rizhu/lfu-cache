@@ -19,7 +19,41 @@ public:
     using LL = KVLinkedList<K, V>;
     using Node_t = typename LL::Node_t;
 
-    LFUCache(size_t capacity) : _capacity(capacity) { }
+    explicit LFUCache(size_t capacity) : _capacity(capacity) { }
+    ~LFUCache() {
+        this->_freq_map.clear();
+        this->_key_value_map.clear();
+    }
+
+    LFUCache(const LFUCache<K, V>& other) {
+        this->_freq_map = other._freq_map;
+        for (const auto& [k, ll] : this->_freq_map) {
+            for (auto node = ll.front(); node != ll.end(); node = node->next()) {
+                this->_key_value_map[node->key()] = node;
+            }
+        }
+
+        this->_capacity = other.capacity();
+        this->_contains = other.size();
+        this->_min_freq = other._min_freq;
+    }
+    LFUCache<K, V>& operator=(const LFUCache<K, V>& other) {
+        this->_key_value_map.clear();
+        this->_freq_map.clear();
+
+        this->_freq_map = other._freq_map;
+        for (const auto& [k, ll] : this->_freq_map) {
+            for (auto node = ll.front(); node != ll.end(); node = node->next()) {
+                this->_key_value_map[node->key()] = node;
+            }
+        }
+
+        this->_capacity = other.capacity();
+        this->_contains = other.size();
+        this->_min_freq = other._min_freq;
+
+        return *this;
+    }
 
     V get(K key) {
         if (this->_key_value_map.count(key) == 0) {
@@ -50,9 +84,8 @@ public:
         this->_contains++;
     }
 
-    size_t size() {
-        return this->_contains;
-    }
+    size_t capacity() const noexcept { return this->_capacity; }
+    size_t size() const noexcept { return this->_contains; }
 
 private:
     void _use(K key) {
@@ -73,7 +106,7 @@ private:
     }
 
     unordered_map<K, Node_t*> _key_value_map;
-    unordered_map<int, LL> _freq_map;
+    unordered_map<size_t, LL> _freq_map;
 
     size_t _capacity;
 

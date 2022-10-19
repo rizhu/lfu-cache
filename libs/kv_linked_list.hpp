@@ -11,19 +11,19 @@ public:
     KVNode() { }
     KVNode(K key, V value) : _key(key), _value(value) { }
 
-    K key() const { return this->_key; }
+    K key() const noexcept { return this->_key; }
     void set_key(K key) { this->_key = key; }
 
-    V value() const { return this->_value; }
+    V value() const noexcept { return this->_value; }
     void set_value(V value) { this->_value = value; }
 
-    size_t freq() const { return this->_freq; }
+    size_t freq() const noexcept { return this->_freq; }
     void use() { this->_freq++; }
 
-    Node_t* prev() const { return this->_prev; }
+    Node_t* prev() const noexcept { return this->_prev; }
     void set_prev(Node_t* prev) { this->_prev = prev; }
 
-    Node_t* next() const { return this->_next; }
+    Node_t* next() const noexcept { return this->_next; }
     void set_next(Node_t* next) { this->_next = next; }
 
 private:
@@ -106,10 +106,10 @@ public:
         this->_sentinel = other.end();
         this->_length = other.size();
 
-        other.set_sentinel(new Node_t());
+        other._sentinel = new Node_t();
         other.end()->set_next(other.end());
         other.end()->set_prev(other.end());
-        other.set_size(0);
+        other._length = 0;
     }
     KVLinkedList<K, V>& operator=(KVLinkedList<K, V>&& other) {
         Node_t *node = this->front(), *next_node = nullptr;
@@ -123,10 +123,10 @@ public:
         this->_sentinel = other.end();
         this->_length = other.size();
 
-        other.set_sentinel(new Node_t());
+        other._sentinel = new Node_t();
         other.end()->set_next(other.end());
         other.end()->set_prev(other.end());
-        other.set_size(0);
+        other._length = 0;
 
         return *this;
     }
@@ -135,10 +135,8 @@ public:
     Node_t* back() const { return this->_sentinel->prev(); }
 
     Node_t* end() const { return this->_sentinel; }
-    void set_sentinel(Node_t *new_sentinel) { this->_sentinel = new_sentinel; }
 
-    size_t size() const { return this->_length; }
-    void set_size(size_t new_size) { this->_length = new_size; }
+    size_t size() const noexcept { return this->_length; }
 
     void push_front(Node_t* node) {
         auto front = this->_sentinel->next();

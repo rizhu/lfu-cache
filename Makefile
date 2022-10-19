@@ -1,7 +1,7 @@
 clean:
 	rm -rf build/
 
-test: test_kv_linked_list_basic test_kv_linked_list_copy test_kv_linked_list_move test_lfu_cache_hashable test_lfu_cache_basic
+test: test_kv_linked_list_basic test_kv_linked_list_copy test_kv_linked_list_move test_lfu_cache_hashable test_lfu_cache_basic test_lfu_cache_copy
 
 test_kv_linked_list_basic:
 	mkdir -p build/
@@ -32,3 +32,9 @@ test_lfu_cache_basic:
 	mkdir -p build/lfu_cache/
 	g++ -std=c++20 -o build/lfu_cache/test_basic tests/lfu_cache/test_basic.cpp
 	./build/lfu_cache/test_basic
+
+test_lfu_cache_copy:
+	mkdir -p build/
+	mkdir -p build/lfu_cache/
+	g++ -std=c++20 -o build/lfu_cache/test_copy tests/lfu_cache/test_copy.cpp
+	./build/lfu_cache/test_copy
